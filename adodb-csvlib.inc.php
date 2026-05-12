@@ -101,16 +101,17 @@ $ADODB_INCLUDED_CSV = 1;
 	{
 		$false = false;
 		$err = false;
-		$fp = @fopen($url,'rb');
-		if (!$fp) {
+		if (!is_readable($url)) {
 			$err = $url.' file/URL not found';
 			return $false;
+		} else {
+			$fp = fopen($url,'rb');
 		}
 		@flock($fp, LOCK_SH);
 		$arr = array();
 		$ttl = 0;
 
-		if ($meta = fgetcsv($fp, 32000, ",")) {
+		if ($meta = fgetcsv($fp, 32000, ",", "\"", "\\")) {
 			// check if error message
 			if (strncmp($meta[0],'****',4) === 0) {
 				$err = trim(substr($meta[0],4,1024));
