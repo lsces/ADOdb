@@ -27,6 +27,7 @@
 class ADODB_pdo_firebird extends ADODB_pdo_base
 {
 	public $dialect = 3;
+	public $nameQuote = '';
 	public $metaTablesSQL = "select lower(rdb\$relation_name) from rdb\$relations where rdb\$relation_name not like 'RDB\$%' and rdb\$relation_name not like 'MON\$%' and rdb\$relation_name not like 'SEC\$%'";
 	public $metaColumnsSQL = "select lower(a.rdb\$field_name), a.rdb\$null_flag, a.rdb\$default_source, b.rdb\$field_length, b.rdb\$field_scale, b.rdb\$field_sub_type, b.rdb\$field_precision, b.rdb\$field_type from rdb\$relation_fields a, rdb\$fields b where a.rdb\$field_source = b.rdb\$field_name and a.rdb\$relation_name = '%s' order by a.rdb\$field_position asc";
 
