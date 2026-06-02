@@ -53,7 +53,7 @@ class ADODB_firebird extends ADOConnection {
 	var $hasGenID = true;
 	var $_bindInputArray = true;
 	var $sysDate = "cast('TODAY' as timestamp)";
-	var $sysTimeStamp = "CURRENT_TIMESTAMP"; //"cast('NOW' as timestamp)";
+	var $sysTimeStamp = "LOCALTIMESTAMP"; // CURRENT_TIMESTAMP returns TIMESTAMP WITH TIME ZONE in Firebird 4+, breaking PHP PDO
 	var $ansiOuter = true;
 	var $hasAffectedRows = true;
 	var $poorAffectedRows = false;

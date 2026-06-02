@@ -828,14 +828,16 @@ class ADODB_DataDict {
 					( substr($fdefault,0,1) != "'" && !is_numeric($fdefault))) {
 
 					if (($ty == 'D' || $ty == 'T') && strtolower($fdefault) != 'null') {
-						// convert default date into database-aware code
-						if ($ty == 'T')
-						{
-							$fdefault = $this->connection->dbTimeStamp($fdefault);
-						}
-						else
-						{
-							$fdefault = $this->connection->dbDate($fdefault);
+						// space-padded value = SQL keyword/expression, pass through verbatim
+						if (strlen($fdefault) > 1 && $fdefault[0] == ' ' && $fdefault[-1] == ' ') {
+							$fdefault = trim($fdefault);
+						} else {
+							// convert default date into database-aware code
+							if ($ty == 'T') {
+								$fdefault = $this->connection->dbTimeStamp($fdefault);
+							} else {
+								$fdefault = $this->connection->dbDate($fdefault);
+							}
 						}
 					}
 					else
