@@ -235,7 +235,11 @@ class ADODB_pdo_firebird extends ADODB_pdo_base
 			return false;
 		}
 
-		return $this->execute("ALTER SEQUENCE $seqname RESTART WITH " . ($startID - 1));
+		// Firebird's RESTART WITH n means "the next generated value IS n" - confirmed
+		// directly: RESTART WITH 0 then GEN_ID(seq,1) returns 0, not 1. So this must be
+		// $startID itself, not $startID-1 (which under-seeds every sequence by one,
+		// causing the first real id issued to be one less than declared).
+		return $this->execute("ALTER SEQUENCE $seqname RESTART WITH " . $startID);
 	}
 
 	public function dropSequence($seqname = 'adodbseq')
@@ -250,7 +254,8 @@ class ADODB_pdo_firebird extends ADODB_pdo_base
 		$rs = @$this->execute($getnext);
 		if (!$rs) {
 			$this->execute(("CREATE SEQUENCE $seqname"));
-			$this->execute("ALTER SEQUENCE $seqname RESTART WITH " . ($startID - 1) . ';');
+			// see createSequence() above - RESTART WITH n means "next value IS n", not n-1
+			$this->execute("ALTER SEQUENCE $seqname RESTART WITH " . $startID . ';');
 			$rs = $this->execute($getnext);
 		}
 		if ($rs && !$rs->EOF) {
